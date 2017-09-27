@@ -13,7 +13,7 @@ public class Memoria {
     
     public Memoria(){
     }
-    public boolean addProcesso(Buraco buraco){// mudei o nome do método e fiz a validação pra não estrapolar o tamanho max, deixei booleano para tratar
+    public boolean addBuraco(Buraco buraco){// mudei o nome do método e fiz a validação pra não estrapolar o tamanho max, deixei booleano para tratar
         if(buraco.getTamanho()+tamanhoAtual>tamanhoMax){
          tamanhoAtual+=buraco.getTamanho();
          this.buracos[buracoAtual] = buraco;
