@@ -1,5 +1,5 @@
 
-package Classes;
+package Gerenciador;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class Memoria {
          this.buracos.add(buraco);
          
     }
-   public List<Buraco> getProcessos(){
+   public List<Buraco> getProcessos(){// Não seria um getBuracos ??
        return this.buracos;
    }
 }
