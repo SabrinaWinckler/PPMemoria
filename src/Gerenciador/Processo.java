@@ -1,4 +1,3 @@
-
 package Gerenciador;
 
 public class Processo {
@@ -15,36 +14,25 @@ public class Processo {
         this.tempoCheg = tempoCheg;
     }
 
-    public String getNome() {
-        return nome;
+    public void executar() {
+        if (this.tempoExec > 0) {
+            this.tempoExec--;
+        }
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public String getNome() {
+        return nome;
     }
 
     public long getTamanho() {
         return tamanho;
     }
 
-    public void setTamanho(int tamanho) {
-        this.tamanho = tamanho;
-    }
-
     public int getTempoExec() {
         return tempoExec;
-    }
-
-    public void setTempoExec(int tempoExec) {
-        this.tempoExec = tempoExec;
     }
 
     public int getTempoCheg() {
         return tempoCheg;
     }
-
-    public void setTempoCheg(int tempoCheg) {
-        this.tempoCheg = tempoCheg;
-    }
-
 }
