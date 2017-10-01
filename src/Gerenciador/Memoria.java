@@ -17,6 +17,14 @@ public class Memoria {
     public Processo[] getProcessos() {
         return processos;
     }
+    public Processo getPosicao(int indice){
+        for(int i = 0; i <= indice; i++){
+            if(i == indice){
+               return processos[i];
+            }
+        }
+        return null;
+    }
 
     public boolean getBuraco(int posicao) {
         return (this.processos[posicao] == null);
@@ -24,7 +32,22 @@ public class Memoria {
 
     public void inserirProcesso(Processo processo, int indice) {
         for(int i = indice; i < processo.getTamanho(); i++){
-            processos[i] = processo;
+            if(getBuraco(i)){
+                processos[i] = processo;
+                break;
+            }
         }
     }
+    public void removerProcesso(Processo processo, int indice) {
+        for(int i = indice; i < processo.getTamanho(); i++){
+            processos[i] = null;
+            break;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Memoria{" + "processos=" + processos.toString() + '}';
+    }
+    
 }

@@ -7,6 +7,7 @@ public class Processo {
     private int tempoExec;
     private int tempoCheg;
 
+
     public Processo(String nome, int tamanho, int tempoExec, int tempoCheg) {
         this.nome = nome;
         this.tamanho = tamanho;
@@ -15,7 +16,7 @@ public class Processo {
     }
 
     public void executar() {
-        if (this.tempoExec > 0) {
+        if (this.tempoExec >= 0) {
             this.tempoExec--;
         }
     }
@@ -35,4 +36,9 @@ public class Processo {
     public int getTempoCheg() {
         return tempoCheg;
     }
+        @Override
+    public String toString() {
+        return "Processo{" + "nome=" + nome + '}';
+    }
+
 }
