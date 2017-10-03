@@ -34,14 +34,12 @@ public class Memoria {
         for(int i = indice; i < processo.getTamanho(); i++){
             if(getBuraco(i)){
                 processos[i] = processo;
-                break;
             }
         }
     }
     public void removerProcesso(Processo processo, int indice) {
         for(int i = indice; i < processo.getTamanho(); i++){
             processos[i] = null;
-            break;
         }
     }
 
