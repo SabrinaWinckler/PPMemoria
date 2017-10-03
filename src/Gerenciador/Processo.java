@@ -6,7 +6,7 @@ public class Processo {
     private int tamanho;
     private int tempoExec;
     private int tempoCheg;
-
+    private int posicaoMemoria;
 
     public Processo(String nome, int tamanho, int tempoExec, int tempoCheg) {
         this.nome = nome;
@@ -36,7 +36,16 @@ public class Processo {
     public int getTempoCheg() {
         return tempoCheg;
     }
-        @Override
+
+    public int getPosicaoMemoria() {
+        return posicaoMemoria;
+    }
+
+    public void setPosicaoMemoria(int posicaoMemoria) {
+        this.posicaoMemoria = posicaoMemoria;
+    }
+
+    @Override
     public String toString() {
         return "Processo{" + "nome=" + nome + '}';
     }
