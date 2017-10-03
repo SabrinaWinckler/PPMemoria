@@ -5,10 +5,11 @@
  */
 package view;
 
-import algoritmo.BestFit;
-import algoritmo.FirstFit;
-import algoritmo.SJF;
+import algoritmo.WorstFit;
+import algoritmo.Fit;
 import gerais.LeitorArquivo;
+import gerais.Memoria;
+import java.awt.Label;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -17,24 +18,28 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Lucas
  */
-public class EscalonadorTela extends javax.swing.JFrame {
+public class Interface extends javax.swing.JFrame {
 
     private File arquivo;
-    private FCFS fcfs;
-    private SJF sjf;
-    private RR rr;
+    private Fit fit;
     private ArrayList<String> listaPlot;
+    
+    int contadorProcessosTotal = 0;
+    int contadorProcessos = 0;
+    long tempoExecucao;
 
     /**
      * Creates new form view
      */
-    public EscalonadorTela() {
+    public Interface() {
         initComponents();
         jButtonStart.setEnabled(false);
         jButtonStep.setEnabled(false);
         jButtonStepBack.setEnabled(false);
         jTableGraphic.getTableHeader().setEnabled(false);
-
+        
+        jLabel3.setVisible(false);
+        jLabel4.setVisible(false);
     }
 
     /**
@@ -53,18 +58,24 @@ public class EscalonadorTela extends javax.swing.JFrame {
         jButtonStep = new javax.swing.JButton();
         jButtonImportar = new javax.swing.JButton();
         jButtonStepBack = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Simulador de Alocação de Processos");
         setResizable(false);
 
-        jButtonStart.setText("Play All");
+        jButtonStart.setText("Executar tudo");
         jButtonStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonStartActionPerformed(evt);
             }
         });
 
-        jComboBoxEscalonadores.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FCFS", "SJF", "RR" }));
+        jComboBoxEscalonadores.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FirstFit", "BestFit", "WorstFit" }));
         jComboBoxEscalonadores.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 jComboBoxEscalonadoresItemStateChanged(evt);
@@ -88,7 +99,7 @@ public class EscalonadorTela extends javax.swing.JFrame {
         jTableGraphic.setShowVerticalLines(false);
         jScrollPane1.setViewportView(jTableGraphic);
 
-        jButtonStep.setText("|>");
+        jButtonStep.setText("→");
         jButtonStep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonStepActionPerformed(evt);
@@ -102,28 +113,53 @@ public class EscalonadorTela extends javax.swing.JFrame {
             }
         });
 
-        jButtonStepBack.setText("<|");
+        jButtonStepBack.setText("←");
         jButtonStepBack.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonStepBackActionPerformed(evt);
             }
         });
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1024", "2048", "4096", "8192" }));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Tamanho da mémoria");
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Solução");
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setLabelFor(jLabel4);
+        jLabel3.setText("Tempo de execução");
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButtonStepBack)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonStep))
                     .addComponent(jButtonStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonImportar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jComboBoxEscalonadores, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButtonStepBack)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonStep)))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 678, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -134,17 +170,29 @@ public class EscalonadorTela extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jComboBoxEscalonadores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonImportar)
                         .addGap(18, 18, 18)
-                        .addComponent(jButtonStart)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBoxEscalonadores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButtonStart)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButtonStep)
-                            .addComponent(jButtonStepBack)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jButtonStepBack)
+                            .addComponent(jButtonStep))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(66, 66, 66))))
         );
 
         pack();
@@ -199,24 +247,44 @@ public class EscalonadorTela extends javax.swing.JFrame {
         if (arquivo != null) {
             jButtonStep.setEnabled(true);
         }
-
+        
+        jLabel3.setVisible(false);
+        jLabel4.setVisible(false);
     }//GEN-LAST:event_jComboBoxEscalonadoresItemStateChanged
 
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        PlotTable.reset();
+        jTableGraphic.setModel(new DefaultTableModel());
+        jButtonStepBack.setEnabled(false);
+        if (arquivo != null) {
+            jButtonStep.setEnabled(true);
+        }
+        
+        jLabel3.setVisible(false);
+        jLabel4.setVisible(false);
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
+
     private void executar() {
+        
         switch ((String) jComboBoxEscalonadores.getSelectedItem()) {
-            case "FCFS":
-                fcfs = new FCFS(LeitorArquivo.montarLista(arquivo));
-                listaPlot = fcfs.executar();
+            case "FirstFit":
+                //fit = new FirstFit(..., ...);
                 break;
-            case "SJF":
-                sjf = new SJF(LeitorArquivo.montarLista(arquivo));
-                listaPlot = sjf.executar();
+            case "BestFit":
+                //fit = new BestFit(..., ...);
                 break;
-            case "RR":
-                rr = new RR(LeitorArquivo.montarLista(arquivo), 2);
-                listaPlot = rr.executar();
+            case "WorstFit":
+                fit = new WorstFit(new Memoria(Integer.parseInt((String) jComboBox1.getSelectedItem())), LeitorArquivo.montarLista(arquivo));
                 break;
         }
+        
+        long inicio = System.nanoTime();
+        listaPlot = fit.executar();
+        tempoExecucao = System.nanoTime() - inicio;
+        jLabel4.setText(String.valueOf(tempoExecucao) + "ms");
+        
+        jLabel3.setVisible(true);
+        jLabel4.setVisible(true);
     }
 
     /**
@@ -228,6 +296,7 @@ public class EscalonadorTela extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+        
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -236,27 +305,22 @@ public class EscalonadorTela extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(EscalonadorTela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(EscalonadorTela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(EscalonadorTela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(EscalonadorTela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new EscalonadorTela().setVisible(true);
+                Interface frame1 = new Interface();
+                frame1.setVisible(true);
+                frame1.setLocationRelativeTo(null);
+                
             }
         });
     }
@@ -266,7 +330,12 @@ public class EscalonadorTela extends javax.swing.JFrame {
     private javax.swing.JButton jButtonStart;
     private javax.swing.JButton jButtonStep;
     private javax.swing.JButton jButtonStepBack;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBoxEscalonadores;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTableGraphic;
     // End of variables declaration//GEN-END:variables
