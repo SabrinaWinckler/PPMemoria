@@ -87,15 +87,8 @@ public class LeitorArquivo {
             Logger.getLogger(LeitorArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        Collections.sort(listaProcessos, new Comparator<Processo>() {
-            @Override
-            public int compare(Processo o1, Processo o2) {
-                return o1.getTempoCheg() - o2.getTempoCheg();
-            }
-        });
-
+        Collections.sort(listaProcessos, (Processo o1, Processo o2) -> o1.getTempoCheg() - o2.getTempoCheg());
         LeitorArquivo.quantidadeProcessos = listaProcessos.size();
-
         return listaProcessos;
     }
 
