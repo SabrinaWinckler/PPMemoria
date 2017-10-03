@@ -30,16 +30,16 @@ public class Memoria {
         return (this.processos[posicao] == null);
     }
 
-    public void inserirProcesso(Processo processo, int indice) {
-        for(int i = indice; i < processo.getTamanho(); i++){
-            if(getBuraco(i)){
-                processos[i] = processo;
+    public void inserirProcesso(Processo processo, int posicao) {
+        for(int i = 0; i < processo.getTamanho(); i++){
+            if(getBuraco(posicao + i)){
+                processos[posicao + i] = processo;
             }
         }
     }
-    public void removerProcesso(Processo processo, int indice) {
-        for(int i = indice; i < processo.getTamanho(); i++){
-            processos[i] = null;
+    public void removerProcesso(Processo processo, int posicao) {
+        for(int i = 0; i < processo.getTamanho(); i++){
+            processos[posicao + i] = null;
         }
     }
 
