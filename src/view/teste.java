@@ -5,9 +5,9 @@
  */
 package view;
 
-import AlgoritmosDeAlocacao.FirstFit;
-import Gerenciador.Memoria;
-import Gerenciador.Processo;
+import algoritmo.FirstFit;
+import gerais.Memoria;
+import gerais.Processo;
 import java.util.ArrayList;
 
 /**

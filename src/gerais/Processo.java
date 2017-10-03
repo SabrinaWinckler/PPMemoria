@@ -1,14 +1,14 @@
-package Gerenciador;
+package gerais;
 
 public class Processo {
 
     private String nome;
     private int tamanho;
-    private int tempoExec;
     private int tempoCheg;
+    private int tempoExec;
     private int posicaoMemoria;
 
-    public Processo(String nome, int tamanho, int tempoExec, int tempoCheg) {
+    public Processo(String nome, int tamanho, int tempoCheg, int tempoExec) {
         this.nome = nome;
         this.tamanho = tamanho;
         this.tempoExec = tempoExec;
@@ -25,7 +25,7 @@ public class Processo {
         return nome;
     }
 
-    public long getTamanho() {
+    public int getTamanho() {
         return tamanho;
     }
 

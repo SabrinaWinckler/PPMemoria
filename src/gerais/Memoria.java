@@ -1,4 +1,4 @@
-package Gerenciador;
+package gerais;
 
 public class Memoria {
 

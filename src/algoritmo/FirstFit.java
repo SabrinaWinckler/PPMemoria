@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package AlgoritmosDeAlocacao;
+package algoritmo;
 
 
-import Gerenciador.Memoria;
-import Gerenciador.Processo;
+import gerais.Memoria;
+import gerais.Processo;
 import java.util.ArrayList;
 
 /**
