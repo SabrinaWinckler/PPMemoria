@@ -29,6 +29,16 @@ public class Memoria {
     public boolean getBuraco(int posicao) {
         return (this.processos[posicao] == null);
     }
+    public int tamanhoDoBuraco(int posicaoInicial){
+        while(posicaoInicial< processos.length){
+            if(processos[posicaoInicial] == null){
+                posicaoInicial ++;
+            }else{
+                break;
+            }
+        }
+      return posicaoInicial;  
+    }
 
     public void inserirProcesso(Processo processo, int posicao) {
         for(int i = 0; i < processo.getTamanho(); i++){

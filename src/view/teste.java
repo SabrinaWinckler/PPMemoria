@@ -19,27 +19,34 @@ public class teste {
      Memoria memoria = new Memoria(500);
      ArrayList<Processo> processos = new ArrayList();
      
-     Processo p1 = new Processo("p1", 88, 50, 0);
+     Processo p1 = new Processo("p1", 3, 50, 0);
      Processo p2 = new Processo("p2", 2, 50, 0);
-     Processo p3 = new Processo("p3", 20, 50, 0);
-     Processo p4 = new Processo("p4", 24, 50, 0);
+     Processo p3 = new Processo("p3", 4, 50, 0);
+     Processo p4 = new Processo("p4", 3, 50, 0);
+     Processo p5 = new Processo("p5", 5, 50, 0);
      
      processos.add(p1);
-     processos.add(p2);
      processos.add(p4);
+     processos.add(p5);
+     processos.add(p5);
+     processos.add(p2);
      
      memoria.inserirProcesso(p2, 0);
-     memoria.inserirProcesso(p3, 2);
-     memoria.inserirProcesso(p2, 6);
+     memoria.inserirProcesso(p3, 10);
+     memoria.inserirProcesso(p2, 20);
      
      FirstFit aloc = new FirstFit(memoria, processos); 
-     
-     for(Processo processo : processos){
-         
-         aloc.insereProcesso(processo);
-         aloc.acabouProcesso(processo);
-         
+    
+     for(int i=0; i<processos.size();i++){
+         //processos.get(i).setPosicaoMemoria(i);
+         aloc.insereProcesso(processos.get(i));
      }
+    // for(Processo processo: processos){
+         
+       //  aloc.insereProcesso(processo);
+        // aloc.acabouProcesso(processo);
+         
+    // }
      for(int i = 0; i< memoria.getProcessos().length;i++){
          
          if(memoria.getPosicao(i) != null){
