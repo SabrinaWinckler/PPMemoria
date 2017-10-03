@@ -16,8 +16,9 @@ import java.util.Arrays;
  * <gustavo.satheler@alunos.unipampa.edu.br>
  * <gustavosatheler@gmail.com>
  */
-public class WorstFit {
+public class WorstFit implements Fit {
 
+    private ArrayList<String> listaPlot;
     private Memoria memoria;
     private ArrayList<Processo> processosEntrada;
     private ArrayList<Processo> processosEmExecucao;
@@ -25,6 +26,7 @@ public class WorstFit {
     private int[] buraco;
 
     public WorstFit(Memoria memoria, ArrayList<Processo> processos) {
+        this.listaPlot = new ArrayList();
         this.memoria = memoria;
         this.processosEntrada = new ArrayList();
         this.processosEntrada = processos;
@@ -33,7 +35,8 @@ public class WorstFit {
         this.buraco = new int[2]; //[0] = Indice inicial do buraco, [1] = Tamanho do buraco
     }
 
-    public void executar() {
+    @Override
+    public ArrayList<String> executar() {
         int tique = 0;
 
         while (!processosEntrada.isEmpty() || !processosEmExecucao.isEmpty() || !processosEmEspera.isEmpty()) {
@@ -47,7 +50,6 @@ public class WorstFit {
                 processosEmEspera.add(processosEntrada.remove(0));
             } else {
                 tique++;
-                System.out.println(Arrays.toString(memoria.getProcessos()));
                 if (!processosEmExecucao.isEmpty()) {
                     this.executarProcessos();
                 }
@@ -59,6 +61,8 @@ public class WorstFit {
                 processosEmExecucao.add(processosEmEspera.remove(0));
             }
         }
+        
+        return listaPlot;
     }
 
     private void maiorBuraco() {
@@ -89,6 +93,7 @@ public class WorstFit {
     private void executarProcessos() {
         for (int i = processosEmExecucao.size() - 1; i >= 0; i--) {
             processosEmExecucao.get(i).executar();
+            listaPlot.add(processosEmExecucao.get(i).getNome());
             if (processosEmExecucao.get(i).getTempoExec() == 0) {
                 this.removerProcesso(i);
             }
