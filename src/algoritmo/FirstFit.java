@@ -97,7 +97,7 @@ public class FirstFit implements Fit {
     }
   
      @Override
-    public ArrayList<String> executar() {
+    public Memoria executar() {
         percorreProcessos();
         for (int i = this.processosEmEspera.size()-1; i>=0; i--) {
             if(insereProcesso(processosEmEspera.get(i))){
@@ -105,6 +105,6 @@ public class FirstFit implements Fit {
             }
         }
         int teste = execucao++;
-        return this.plot;
+        return this.memoria;
     }
 }
