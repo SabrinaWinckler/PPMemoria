@@ -30,7 +30,7 @@ public class Memoria {
         return (this.processos[posicao] == null);
     }
     public int tamanhoDoBuraco(int posicaoInicial){
-        while(posicaoInicial< processos.length){
+        while(posicaoInicial<= processos.length){
             if(processos[posicaoInicial] == null){
                 posicaoInicial ++;
             }else{

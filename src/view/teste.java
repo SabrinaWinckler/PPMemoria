@@ -16,14 +16,14 @@ import java.util.ArrayList;
  */
 public class teste {
     public static void main(String[] args){
-     Memoria memoria = new Memoria(500);
+     Memoria memoria = new Memoria(30);
      ArrayList<Processo> processos = new ArrayList();
      
-     Processo p1 = new Processo("p1", 3, 50, 0);
-     Processo p2 = new Processo("p2", 2, 50, 0);
-     Processo p3 = new Processo("p3", 4, 50, 0);
-     Processo p4 = new Processo("p4", 3, 50, 0);
-     Processo p5 = new Processo("p5", 5, 50, 0);
+     Processo p1 = new Processo("p1", 3, 500, 0);
+     Processo p2 = new Processo("p2", 2, 20, 1);
+     Processo p3 = new Processo("p3", 4,3 , 2);
+     Processo p4 = new Processo("p4", 3, 1, 3);
+     Processo p5 = new Processo("p5", 5, 2, 4);
      
      processos.add(p1);
      processos.add(p4);
@@ -37,16 +37,8 @@ public class teste {
      
      FirstFit aloc = new FirstFit(memoria, processos); 
     
-     for(int i=0; i<processos.size();i++){
-         //processos.get(i).setPosicaoMemoria(i);
-         aloc.insereProcesso(processos.get(i));
-     }
-    // for(Processo processo: processos){
-         
-       //  aloc.insereProcesso(processo);
-        // aloc.acabouProcesso(processo);
-         
-    // }
+     //aloc.insereProcesso(processos);
+     aloc.percorreProcessos();
      for(int i = 0; i< memoria.getProcessos().length;i++){
          
          if(memoria.getPosicao(i) != null){
