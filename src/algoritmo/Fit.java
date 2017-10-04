@@ -5,6 +5,7 @@
  */
 package algoritmo;
 
+import gerais.Memoria;
 import java.util.ArrayList;
 
 /**
@@ -15,5 +16,5 @@ import java.util.ArrayList;
  */
 public interface Fit {
     
-    public ArrayList<String> executar();
+    public Memoria executar();
 }
