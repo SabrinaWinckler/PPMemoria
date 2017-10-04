@@ -8,7 +8,6 @@ package algoritmo;
 import gerais.Memoria;
 import gerais.Processo;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  *
@@ -18,16 +17,14 @@ import java.util.Arrays;
  */
 public class WorstFit implements Fit {
 
-    private ArrayList<String> listaPlot;
     private Memoria memoria;
     private ArrayList<Processo> processosEntrada;
     private ArrayList<Processo> processosEmExecucao;
     private ArrayList<Processo> processosEmEspera;
     private int[] buraco;
 
-    public WorstFit(Memoria memoria, ArrayList<Processo> processos) {
-        this.listaPlot = new ArrayList();
-        this.memoria = memoria;
+    public WorstFit(int tamanhoMemoria, ArrayList<Processo> processos) {
+        this.memoria = new Memoria(tamanhoMemoria);
         this.processosEntrada = new ArrayList();
         this.processosEntrada = processos;
         this.processosEmExecucao = new ArrayList();
@@ -36,7 +33,7 @@ public class WorstFit implements Fit {
     }
 
     @Override
-    public ArrayList<String> executar() {
+    public Memoria executar() {
         int tique = 0;
 
         while (!processosEntrada.isEmpty() || !processosEmExecucao.isEmpty() || !processosEmEspera.isEmpty()) {
@@ -62,7 +59,7 @@ public class WorstFit implements Fit {
             }
         }
         
-        return listaPlot;
+        return memoria;
     }
 
     private void maiorBuraco() {
@@ -93,7 +90,6 @@ public class WorstFit implements Fit {
     private void executarProcessos() {
         for (int i = processosEmExecucao.size() - 1; i >= 0; i--) {
             processosEmExecucao.get(i).executar();
-            listaPlot.add(processosEmExecucao.get(i).getNome());
             if (processosEmExecucao.get(i).getTempoExec() == 0) {
                 this.removerProcesso(i);
             }
