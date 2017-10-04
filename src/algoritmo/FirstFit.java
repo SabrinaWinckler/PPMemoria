@@ -5,7 +5,6 @@
  */
 package algoritmo;
 
-
 import gerais.Memoria;
 import gerais.Processo;
 import java.util.ArrayList;
@@ -15,38 +14,34 @@ import java.util.ArrayList;
  * @author SABRINA
  */
 public class FirstFit implements Fit {
-    private Memoria memoria;
-    private ArrayList<Processo> processos;
-    private ArrayList<String> plot;
-    private ArrayList<Processo> processosEmEspera;
-    private int execucao;
 
+    private Memoria memoria;
+    private ArrayList<Processo> processosEmExecucao;
+    private ArrayList<String> plot;
+    private ArrayList<Processo> EntradaDeProcessos;
+    private ArrayList<Processo> processosEmEspera;
+    private static int execucao;
 
     @Override
     public String toString() {
         //"memoria=" + memoria.toString()+
-        
-        return "FirstFit{" +  ", processos=" + processos.toString() + '}';
-    }
 
+        return "FirstFit{" + ", processos=" + processosEmExecucao.toString() + '}';
+    }
 
     public FirstFit(Memoria memoria, ArrayList<Processo> processos) {
         this.memoria = memoria;
-        this.processosEmEspera = processos;
-        this.processos = new ArrayList<Processo>();
+        this.EntradaDeProcessos = processos;
+        this.processosEmExecucao = new ArrayList<Processo>();
+        this.processosEmEspera = new ArrayList<Processo>();
         this.execucao = 0;
- 
+
     }
     //USA O PRIMEIRO BURACO QUE COUBER O PROCESSO
     //encontrar primeiro buraco vazio
     //verificar se tem espaço para o processo
     //se tiver insere se não procura novamente se não houver mais espaço retorna que não tem espaço para a terefa ser alocada 
-    //    public boolean estaCheio(){
-    //    if(!memoria.getBuraco()){
-    //        return true;
-    //    }
-    //    return false; 
-    //}    
+  
     public boolean temEspaco(int posicao, int tam) {
         if (memoria.getBuraco(posicao)) {
             int espaco = 0;
@@ -63,61 +58,53 @@ public class FirstFit implements Fit {
         }
         return false;
     }
-    public void percorreProcessos(){
 
-        
-        for(Processo processo: processosEmEspera){
-         
-            insereProcesso(processo);
-            emExecucao(processo);  
-            
+    public void percorreProcessos() {
+
+        for (Processo processo : EntradaDeProcessos) {
+
+            if (processo.getTempoCheg() == execucao) {
+                processosEmEspera.add(processo);
+            }
+
         }
-        removerProcesso(0);
-        
+
     }
-    public void insereProcesso(Processo processo){
-        
-        for(int i = 0; i<memoria.getProcessos().length;i++){
-            
-            if(temEspaco(i, processo.getTamanho())){
+
+    public boolean insereProcesso(Processo processo) {
+
+        for (int i = 0; i < memoria.getTamanho(); i++) {
+
+            if (temEspaco(i, processo.getTamanho())) {
                 memoria.inserirProcesso(processo, i);
-                if(memoria.getPosicao(i) == processo ){
-                    break;
-                }             
+                this.processosEmExecucao.add(processo);
+                return true;
             }
         }
-        
+        return false;
     }
+    
 
-    public void emExecucao(Processo processo){
-
-            for (int i = 0; i<processosEmEspera.size(); i++){
-                
-                this.processos.add(i, processo);
-                this.processos.get(i).setPosicaoMemoria(i);
-                this.processos.get(i).executar();
- 
+    public void executarProcessos() {
+        for (int i = processosEmExecucao.size()-1; i>=0; i--) {
+            Processo processo = processosEmExecucao.get(i);
+            processo.executar();
+            if (processo.getTempoExec() == 0) {
+                memoria.removerProcesso(processo, processo.getPosicaoMemoria());
+                processosEmExecucao.remove(i);
             }
-               
-    }
-    public boolean acabouProcesso(int posicao){
-        
-         return (this.processos.get(posicao).getTempoExec() == 0);
-    }
-    public void removerProcesso(int posicao){
-        for(int i = posicao; i<processos.size(); i++){
-        execucao = processos.get(i).getTempoExec();
-        do{
-            if(acabouProcesso(i)){
-                 this.memoria.removerProcesso(processos.get(i), i);
-            }
-        }while(execucao >=0);
         }
-          
     }
-
-    @Override
+  
+     @Override
     public ArrayList<String> executar() {
+        percorreProcessos();
+        for (int i = this.processosEmEspera.size()-1; i>=0; i--) {
+            if(insereProcesso(processosEmEspera.get(i))){
+               processosEmEspera.remove(i);
+            }
+        }
+        int teste = execucao++;
         return this.plot;
     }
 }
