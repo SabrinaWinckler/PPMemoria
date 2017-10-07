@@ -22,7 +22,7 @@ public class Desenhar extends JFrame {
 
     private Memoria memoria;
     private static int posicaoProcesso;
-    private int anterior;
+    private int proxPosicao;
     int [] buraco;
     ArrayList<Processo> processos = new ArrayList();
 
@@ -32,39 +32,38 @@ public class Desenhar extends JFrame {
         this.memoria = memoria;
         transformaMemoria(memoria);
         
-       setSize(500, 700);
+       setSize(1200, 1024);
       setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
     }
 
     public void paint(Graphics g) {
-        g.fillRect(100, 50, 300, 550);
+        g.fillRect(100, 50, 300, memoria.getTamanho());
 
-        for (int i = 0; i <= processos.size(); i++) {
+        for (int i = 0; i <= memoria.getTamanho(); i++) {
             
             if (i == 0) {
                 posicaoProcesso = 55;//posiÃ§Ã£o inicial
             } else {
-                posicaoProcesso = anterior;//posiÃ§Ã£o anterior + tamanho do processo
+                posicaoProcesso = proxPosicao;//posiÃ§Ã£o anterior + tamanho do processo
             }
-            anterior = posicaoProcesso;
             if(processos.get(i).getNome()=="buraco"){
                                 g.setColor(Color.gray);
             g.fillRect(110, posicaoProcesso, 280, processos.get(i).getTamanho());
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial Bold", Font.PLAIN, 11));
-            posicaoString = processos.get(i).getTamanho() + posicaoProcesso / 2; // onde vai escrever o nome do processo
+            posicaoString =  posicaoProcesso+processos.get(i).getTamanho() / 2; // onde vai escrever o nome do processo
             g.drawString("Buraco "+processos.get(i).getTamanho() + "k", 150, posicaoString);
-            anterior = posicaoProcesso + processos.get(i).getTamanho()+5;
+            proxPosicao = posicaoProcesso + processos.get(i).getTamanho()+5;
             }else{
                 g.setColor(Color.red);
             g.fillRect(110, posicaoProcesso, 280, processos.get(i).getTamanho());
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial Bold", Font.PLAIN, 11));
-            posicaoString = processos.get(i).getTamanho() + posicaoProcesso / 2; // onde vai escrever o nome do processo
+            posicaoString = posicaoProcesso+ processos.get(i).getTamanho()/2; // onde vai escrever o nome do processo
             g.drawString(processos.get(i).getNome()+" "+processos.get(i).getTamanho() + "k", 150, posicaoString);
-            anterior = posicaoProcesso + processos.get(i).getTamanho()+5;
+            proxPosicao = posicaoProcesso + processos.get(i).getTamanho()+5;
             }
         }
 //    }
@@ -73,20 +72,20 @@ public class Desenhar extends JFrame {
     public List transformaMemoria(Memoria m) {
         
         
-        for (int i = 0; i <= memoria.getTamanho(); i++) {
-            if (m.getPosicao(i) == null)//ver como vem o buraco
+        for (int i = 0; i < memoria.getTamanho(); i++) {
+            if (m.getBuraco(i))//ver como vem o buraco
             {
                int tamanhoBuraco= maiorBuraco(i);
                Processo p = new Processo("buraco", tamanhoBuraco, 0, 0);
                processos.add(p);
-               i +=tamanhoBuraco-1;
+               i =i+tamanhoBuraco;
             } else {
 
                Processo primeiro = m.getPosicao(i);
                 int tamanhoProcesso = primeiro.getTamanho();
               Processo p = new Processo(primeiro.getNome(), tamanhoProcesso, 0, 0);
               processos.add(p);
-              i+=tamanhoProcesso-1;
+              i=i+tamanhoProcesso;
                 
             }
         }
