@@ -2,9 +2,9 @@ package gerais;
 
 public class Processo {
 
-    private String nome;
-    private int tamanho;
-    private int tempoCheg;
+    private final String nome;
+    private final int tamanho;
+    private final int tempoCheg;
     private int tempoExec;
     private int posicaoMemoria;
 
@@ -51,7 +51,13 @@ public class Processo {
 
     @Override
     public String toString() {
-        return "Processo{" + "nome=" + nome + '}';
+        return nome;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Processo outroProcesso = (Processo) o;
+        return this.nome.equals(outroProcesso.nome);
     }
 
 }

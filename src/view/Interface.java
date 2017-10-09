@@ -5,14 +5,12 @@
  */
 package view;
 
-import algoritmo.WorstFit;
+import algoritmo.BestFit;
+import algoritmo.FirstFit;
 import algoritmo.Fit;
+import algoritmo.WorstFit;
 import gerais.LeitorArquivo;
-import gerais.Memoria;
-import java.awt.Label;
 import java.io.File;
-import java.util.ArrayList;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -22,10 +20,10 @@ public class Interface extends javax.swing.JFrame {
 
     private File arquivo;
     private Fit fit;
-    private ArrayList<String> listaPlot;
-    
+
     int contadorProcessosTotal = 0;
     int contadorProcessos = 0;
+    int tamanhoMemoria;
     long tempoExecucao;
 
     /**
@@ -33,11 +31,11 @@ public class Interface extends javax.swing.JFrame {
      */
     public Interface() {
         initComponents();
+        //        tamanhoMemoria = Integer.valueOf(String.valueOf(jComboBoxTamanhoMemoria.getSelectedItem()));
+        tamanhoMemoria = 10;
         jButtonStart.setEnabled(false);
         jButtonStep.setEnabled(false);
-        jButtonStepBack.setEnabled(false);
-        jTableGraphic.getTableHeader().setEnabled(false);
-        
+
         jLabel3.setVisible(false);
         jLabel4.setVisible(false);
     }
@@ -53,16 +51,15 @@ public class Interface extends javax.swing.JFrame {
 
         jButtonStart = new javax.swing.JButton();
         jComboBoxEscalonadores = new javax.swing.JComboBox<>();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTableGraphic = new javax.swing.JTable();
         jButtonStep = new javax.swing.JButton();
         jButtonImportar = new javax.swing.JButton();
-        jButtonStepBack = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jComboBoxTamanhoMemoria = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextAreaDisplay = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Simulador de Alocação de Processos");
@@ -82,24 +79,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jTableGraphic.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        jTableGraphic.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        jTableGraphic.setEnabled(false);
-        jTableGraphic.setFocusable(false);
-        jTableGraphic.setGridColor(new java.awt.Color(255, 255, 255));
-        jTableGraphic.setRequestFocusEnabled(false);
-        jTableGraphic.setShowHorizontalLines(false);
-        jTableGraphic.setShowVerticalLines(false);
-        jScrollPane1.setViewportView(jTableGraphic);
-
-        jButtonStep.setText("→");
+        jButtonStep.setText("Executar Evento");
         jButtonStep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonStepActionPerformed(evt);
@@ -113,17 +93,10 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jButtonStepBack.setText("←");
-        jButtonStepBack.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonStepBackActionPerformed(evt);
-            }
-        });
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1024", "2048", "4096", "8192" }));
-        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+        jComboBoxTamanhoMemoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1024", "2048", "4096", "8192" }));
+        jComboBoxTamanhoMemoria.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jComboBox1ItemStateChanged(evt);
+                jComboBoxTamanhoMemoriaItemStateChanged(evt);
             }
         });
 
@@ -139,6 +112,10 @@ public class Interface extends javax.swing.JFrame {
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
+        jTextAreaDisplay.setColumns(20);
+        jTextAreaDisplay.setRows(5);
+        jScrollPane2.setViewportView(jTextAreaDisplay);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -146,22 +123,19 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButtonStepBack)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonStep))
                     .addComponent(jButtonStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonImportar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBoxTamanhoMemoria, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jComboBoxEscalonadores, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 678, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonStep, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 998, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -170,25 +144,23 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonImportar)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jComboBoxTamanhoMemoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBoxEscalonadores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButtonStart)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButtonStepBack)
-                            .addComponent(jButtonStep))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonStep)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -199,10 +171,9 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
-        PlotTable.reset();
+
         this.executar();
-        PlotTable.plotAll(jTableGraphic, listaPlot, LeitorArquivo.getQuantidadeProcessos());
-        jButtonStepBack.setEnabled(true);
+
         jButtonStep.setEnabled(false);
 
     }//GEN-LAST:event_jButtonStartActionPerformed
@@ -210,11 +181,7 @@ public class Interface extends javax.swing.JFrame {
     private void jButtonStepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStepActionPerformed
 
         this.executar();
-        PlotTable.plotStep(jTableGraphic, listaPlot, LeitorArquivo.getQuantidadeProcessos());
-        jButtonStepBack.setEnabled(true);
-        if (PlotTable.getStep() == listaPlot.size()) {
-            jButtonStep.setEnabled(false);
-        }
+
 
     }//GEN-LAST:event_jButtonStepActionPerformed
 
@@ -224,65 +191,54 @@ public class Interface extends javax.swing.JFrame {
             jButtonStart.setEnabled(true);
             jButtonStep.setEnabled(true);
         }
-        PlotTable.reset();
-        jTableGraphic.setModel(new DefaultTableModel());
-
+        
+        jTextAreaDisplay.setText("");
+        fit = null;
+        
     }//GEN-LAST:event_jButtonImportarActionPerformed
 
-    private void jButtonStepBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStepBackActionPerformed
-
-        PlotTable.stepBack(jTableGraphic, listaPlot, LeitorArquivo.getQuantidadeProcessos());
-        if (PlotTable.getStep() == 0) {
-            jButtonStepBack.setEnabled(false);
-        }
-        jButtonStep.setEnabled(true);
-
-
-    }//GEN-LAST:event_jButtonStepBackActionPerformed
-
     private void jComboBoxEscalonadoresItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxEscalonadoresItemStateChanged
-        PlotTable.reset();
-        jTableGraphic.setModel(new DefaultTableModel());
-        jButtonStepBack.setEnabled(false);
+
         if (arquivo != null) {
             jButtonStep.setEnabled(true);
         }
+
+        jTextAreaDisplay.setText("");
+        fit = null;
         
         jLabel3.setVisible(false);
         jLabel4.setVisible(false);
     }//GEN-LAST:event_jComboBoxEscalonadoresItemStateChanged
 
-    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
-        PlotTable.reset();
-        jTableGraphic.setModel(new DefaultTableModel());
-        jButtonStepBack.setEnabled(false);
-        if (arquivo != null) {
-            jButtonStep.setEnabled(true);
-        }
-        
-        jLabel3.setVisible(false);
-        jLabel4.setVisible(false);
-    }//GEN-LAST:event_jComboBox1ItemStateChanged
+    private void jComboBoxTamanhoMemoriaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxTamanhoMemoriaItemStateChanged
+
+        tamanhoMemoria = Integer.valueOf(String.valueOf(jComboBoxTamanhoMemoria.getSelectedItem()));
+
+    }//GEN-LAST:event_jComboBoxTamanhoMemoriaItemStateChanged
 
     private void executar() {
-        
-        switch ((String) jComboBoxEscalonadores.getSelectedItem()) {
-            case "FirstFit":
-                //fit = new FirstFit(..., ...);
-                break;
-            case "BestFit":
-                //fit = new BestFit(..., ...);
-                break;
-            case "WorstFit":
-                fit = new WorstFit(new Memoria(Integer.parseInt((String) jComboBox1.getSelectedItem())), LeitorArquivo.montarLista(arquivo));
-                break;
+
+        if (fit == null) {
+            switch ((String) jComboBoxEscalonadores.getSelectedItem()) {
+                case "FirstFit":
+                    fit = new FirstFit(LeitorArquivo.montarLista(arquivo), tamanhoMemoria);
+                    break;
+                case "BestFit":
+                    fit = new BestFit(LeitorArquivo.montarLista(arquivo), tamanhoMemoria);
+                    break;
+                case "WorstFit":
+                    fit = new WorstFit(LeitorArquivo.montarLista(arquivo), tamanhoMemoria);
+                    break;
+            }
         }
-        
+
         long inicio = System.nanoTime();
-        listaPlot = fit.executar();
+        fit.executar();
         tempoExecucao = System.nanoTime() - inicio;
+        jTextAreaDisplay.setText(fit.toString());
+
         jLabel4.setText(String.valueOf(tempoExecucao) + "ms");
-        
+
         jLabel3.setVisible(true);
         jLabel4.setVisible(true);
     }
@@ -296,7 +252,7 @@ public class Interface extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -320,7 +276,7 @@ public class Interface extends javax.swing.JFrame {
                 Interface frame1 = new Interface();
                 frame1.setVisible(true);
                 frame1.setLocationRelativeTo(null);
-                
+
             }
         });
     }
@@ -329,15 +285,14 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JButton jButtonImportar;
     private javax.swing.JButton jButtonStart;
     private javax.swing.JButton jButtonStep;
-    private javax.swing.JButton jButtonStepBack;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBoxEscalonadores;
+    private javax.swing.JComboBox<String> jComboBoxTamanhoMemoria;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTableGraphic;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea jTextAreaDisplay;
     // End of variables declaration//GEN-END:variables
 
 }

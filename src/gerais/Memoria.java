@@ -2,11 +2,11 @@ package gerais;
 
 public class Memoria {
 
-    private Processo[] processos;
-    private int tamanho;
+    private final Processo[] memoriaVet;
+    private final int tamanho;
 
     public Memoria(int tamanho) {
-        this.processos = new Processo[tamanho];
+        this.memoriaVet = new Processo[tamanho];
         this.tamanho = tamanho;
     }
 
@@ -14,48 +14,47 @@ public class Memoria {
         return tamanho;
     }
 
-    public Processo[] getProcessos() {
-        return processos;
-    }
-    public Processo getPosicao(int indice){
-        for(int i = 0; i <= indice; i++){
-            if(i == indice){
-               return processos[i];
-            }
+    public Processo get(int indice) {
+
+        try {
+            return memoriaVet[indice];
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Caught IndexOutOfBoundsException: " + e.getMessage());
         }
         return null;
-    }
-
-    public boolean getBuraco(int posicao) {
-        return (this.processos[posicao] == null);
-    }
-    public int tamanhoDoBuraco(int posicaoInicial){
-        while(posicaoInicial<= processos.length){
-            if(processos[posicaoInicial] == null){
-                posicaoInicial ++;
-            }else{
-                break;
-            }
-        }
-      return posicaoInicial;  
+        
     }
 
     public void inserirProcesso(Processo processo, int posicao) {
-        for(int i = 0; i < processo.getTamanho(); i++){
-            if(getBuraco(posicao + i)){
-                processos[posicao + i] = processo;
+        for (int i = 0; i < processo.getTamanho(); i++) {
+            if (memoriaVet[posicao + i] == null) {
+                memoriaVet[posicao + i] = processo;
             }
         }
     }
+
     public void removerProcesso(Processo processo, int posicao) {
-        for(int i = 0; i < processo.getTamanho(); i++){
-            processos[posicao + i] = null;
+        for (int i = 0; i < processo.getTamanho(); i++) {
+            memoriaVet[posicao + i] = null;
         }
     }
 
     @Override
     public String toString() {
-        return "Memoria{" + "processos=" + processos.toString() + '}';
+
+        String memoriaString = "";
+
+        for (Processo processo : memoriaVet) {
+            if(processo != null){
+                 memoriaString += " " + processo.toString();
+            }else{
+                memoriaString+= " -";
+            }
+           
+        }
+
+        return memoriaString;
+
     }
-    
+
 }

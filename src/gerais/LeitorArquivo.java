@@ -5,15 +5,12 @@
  */
 package gerais;
 
-import gerais.Memoria;
-import gerais.Processo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -33,6 +30,7 @@ public class LeitorArquivo {
     public static File carregarArquivo() {
 
         JFileChooser chooser = new JFileChooser();
+        
         FileFilter filter = new FileNameExtensionFilter("Arquivo CSV", "csv");
         chooser.addChoosableFileFilter(filter);
         chooser.setAcceptAllFileFilterUsed(false);

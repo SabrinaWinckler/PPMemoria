@@ -5,7 +5,6 @@
  */
 package algoritmo;
 
-import gerais.Memoria;
 import gerais.Processo;
 import java.util.ArrayList;
 
@@ -13,51 +12,90 @@ import java.util.ArrayList;
  *
  * @author SABRINA
  */
-public class BestFit {
+public class BestFit extends Fit {
+    
+    int menorEspaco = Integer.MAX_VALUE;  
+    
+    int indiceMenor = -1;
 
-    private Memoria memoria;
-    private Processo[] processos;
+    public BestFit(ArrayList<Processo> listaEntrada, int tamanhoMemoria) {
 
-    public BestFit(Memoria memoria, Processo[] processos) {
-        this.memoria = memoria;
-        this.processos = processos;
+        super(listaEntrada, tamanhoMemoria);
+        this.tempoClock = 0;
+
     }
 
-    public int cabeEspaco(int tam) {
-        int espaco = 0;
-        int espacoAnterior = Integer.MAX_VALUE;
-        int posicaoMenor = -1;
-        int posicaoIni = 0;
+    @Override
+    public boolean executar() {
 
-        for (int i = 0; i < memoria.getTamanho(); i++) {
-            if (memoria.getBuraco(i)) {
-                if (espaco == 0) {
-                    posicaoIni = i;
-                }
-                espaco++;
+        ocorreuEvento = false;
+        Processo processo;
+        gerenciadorProcessos.percorreProcessos(tempoClock);
+
+        for (int i = processosEmEspera.size() - 1; i >= 0; i--) {
+
+            processo = processosEmEspera.get(i);
+
+            heuristica(processo, i);
+
+            if (indiceMenor >= 0) {
+
+                gerenciadorProcessos.insereProcesso(processo, indiceMenor);
+                processosEmEspera.remove(i);
+                indiceMenor = -1;
+                menorEspaco = Integer.MAX_VALUE;
+                ocorreuEvento = true;
+
             } else {
-                if (espaco == tam) {
-                    return posicaoIni;
-                }
-                if (espaco > tam) {
-                    if (espacoAnterior > espaco) {
-                        espacoAnterior = espaco;
-                        posicaoMenor = posicaoIni;
+                //contar tentativas falhas;
+            }
+
+        }
+
+        if (gerenciadorProcessos.executarProcessos()) {
+            ocorreuEvento = true;
+        }
+
+        tempoClock++;
+        return ocorreuEvento;
+    }
+
+    private void heuristica(Processo processo, int indiceProcesso) {
+
+        indiceProcura = 0;
+        
+        while (indiceProcura < memoria.getTamanho()) {
+
+            procuraEspaco(indiceProcura);
+
+            if (espaco == processo.getTamanho()) {               
+                //Pula o indice de procura para não ficar sempre procurando
+                //em locais no qual já passou.
+                indiceMenor = indiceProcura;
+                indiceProcura += processo.getTamanho();                
+                ocorreuEvento = true;
+                break;
+                
+            } else {
+
+                if (espaco >= processo.getTamanho()) {
+                    if (menorEspaco > espaco) {
+                        menorEspaco = espaco;
+                        indiceMenor = indiceProcura;
+                        indiceProcura += espaco;
+                    }else{
+                        indiceProcura += espaco;
+                    }
+                } else {
+                    //caso exista um processo onde foi procurado
+                    if (espaco == 0) {
+                        indiceProcura += memoria.get(indiceProcura).getTamanho();
+                    } else {
+                        indiceProcura += espaco;
                     }
                 }
-                espaco = 0;
             }
         }
-        if (espaco == tam) {
-            return posicaoIni;
-        }
-        if (espaco > tam) {
-            if (espacoAnterior > espaco) {
-                posicaoMenor = posicaoIni;
-            }
-        }
-        return posicaoMenor;
     }
 
-    
 }

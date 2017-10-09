@@ -5,7 +5,6 @@
  */
 package algoritmo;
 
-import gerais.Memoria;
 import gerais.Processo;
 import java.util.ArrayList;
 
@@ -15,90 +14,79 @@ import java.util.ArrayList;
  * <gustavo.satheler@alunos.unipampa.edu.br>
  * <gustavosatheler@gmail.com>
  */
-public class WorstFit implements Fit {
+public class WorstFit extends Fit {
 
-    private Memoria memoria;
-    private ArrayList<Processo> processosEntrada;
-    private ArrayList<Processo> processosEmExecucao;
-    private ArrayList<Processo> processosEmEspera;
-    private int[] buraco;
+    int maiorEspaco = Integer.MIN_VALUE;
 
-    public WorstFit(int tamanhoMemoria, ArrayList<Processo> processos) {
-        this.memoria = new Memoria(tamanhoMemoria);
-        this.processosEntrada = new ArrayList();
-        this.processosEntrada = processos;
-        this.processosEmExecucao = new ArrayList();
-        this.processosEmEspera = new ArrayList();
-        this.buraco = new int[2]; //[0] = Indice inicial do buraco, [1] = Tamanho do buraco
+    int indiceMaior = -1;
+
+    public WorstFit(ArrayList<Processo> listaEntrada, int tamanhoMemoria) {
+
+        super(listaEntrada, tamanhoMemoria);
+        this.tempoClock = 0;
+
     }
 
     @Override
-    public Memoria executar() {
-        int tique = 0;
+    public boolean executar() {
 
-        while (!processosEntrada.isEmpty() || !processosEmExecucao.isEmpty() || !processosEmEspera.isEmpty()) {
-            this.maiorBuraco();
+        ocorreuEvento = false;
+        Processo processo;
+        gerenciadorProcessos.percorreProcessos(tempoClock);
 
-            if (!processosEntrada.isEmpty() && (processosEntrada.get(0).getTempoCheg() == tique && processosEntrada.get(0).getTamanho() <= buraco[1])) {
-                memoria.inserirProcesso(processosEntrada.get(0), this.buraco[0]);
-                processosEntrada.get(0).setPosicaoMemoria(buraco[0]);
-                processosEmExecucao.add(processosEntrada.remove(0));
-            } else if(!processosEntrada.isEmpty() && (processosEntrada.get(0).getTempoCheg() == tique && processosEntrada.get(0).getTamanho() > buraco[1])){
-                processosEmEspera.add(processosEntrada.remove(0));
+        for (int i = processosEmEspera.size() - 1; i >= 0; i--) {
+
+            processo = processosEmEspera.get(i);
+
+            heuristica(processo, i);
+
+            if (indiceMaior >= 0) {
+
+                gerenciadorProcessos.insereProcesso(processo, indiceMaior);
+                processosEmEspera.remove(i);
+                indiceMaior = -1;
+                maiorEspaco = Integer.MIN_VALUE;
+                ocorreuEvento = true;
+
             } else {
-                tique++;
-                if (!processosEmExecucao.isEmpty()) {
-                    this.executarProcessos();
+                //contar tentativas falhas;
+            }
+
+        }
+
+        if (gerenciadorProcessos.executarProcessos()) {
+            ocorreuEvento = true;
+        }
+
+        tempoClock++;
+        return ocorreuEvento;
+    }
+
+    private void heuristica(Processo processo, int indiceProcesso) {
+
+        indiceProcura = 0;
+
+        while (indiceProcura < memoria.getTamanho()) {
+
+            procuraEspaco(indiceProcura);
+
+            if (espaco >= processo.getTamanho()) {
+                if (maiorEspaco < espaco) {
+                    maiorEspaco = espaco;
+                    indiceMaior = indiceProcura;
+                    indiceProcura += espaco;
+                }else{
+                    indiceProcura += espaco;
+                }
+            } else {
+                //caso exista um processo onde foi procurado
+                if (espaco == 0) {
+                    indiceProcura += memoria.get(indiceProcura).getTamanho();
+                } else {
+                    indiceProcura += espaco;
                 }
             }
-            
-            if (!processosEmEspera.isEmpty() && processosEmEspera.get(0).getTamanho() <= buraco[1]) {
-                memoria.inserirProcesso(processosEmEspera.get(0), this.buraco[0]);
-                processosEmEspera.get(0).setPosicaoMemoria(buraco[0]);
-                processosEmExecucao.add(processosEmEspera.remove(0));
-            }
-        }
-        
-        return memoria;
-    }
-
-    private void maiorBuraco() {
-        buraco[0] = 0;
-        buraco[1] = 0;
-        int indice = 0;
-        int tamanhoBuraco = 0;
-
-        for (int i = 0; i < memoria.getTamanho(); i++) {
-            if (memoria.getBuraco(i)) {
-                tamanhoBuraco++;
-            } else {
-                if (tamanhoBuraco > this.buraco[1]) {
-                    this.buraco[0] = indice;
-                    this.buraco[1] = tamanhoBuraco;
-                }
-                indice = i + 1;
-                tamanhoBuraco = 0;
-            }
-        }
-
-        if (tamanhoBuraco > this.buraco[1]) {
-            this.buraco[0] = indice;
-            this.buraco[1] = tamanhoBuraco;
         }
     }
 
-    private void executarProcessos() {
-        for (int i = processosEmExecucao.size() - 1; i >= 0; i--) {
-            processosEmExecucao.get(i).executar();
-            if (processosEmExecucao.get(i).getTempoExec() == 0) {
-                this.removerProcesso(i);
-            }
-        }
-    }
-
-    private void removerProcesso(int posicao) {
-        Processo processoRemovido = processosEmExecucao.remove(posicao);
-        memoria.removerProcesso(processoRemovido, processoRemovido.getPosicaoMemoria());
-
-    }
 }
