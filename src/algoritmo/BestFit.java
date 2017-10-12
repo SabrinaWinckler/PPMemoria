@@ -56,6 +56,8 @@ public class BestFit extends Fit {
             ocorreuEvento = true;
         }
 
+        this.tentativasFalhas += processosEmEspera.size();
+        
         tempoClock++;
         return ocorreuEvento;
     }

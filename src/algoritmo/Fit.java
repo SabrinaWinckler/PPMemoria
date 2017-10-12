@@ -23,13 +23,15 @@ public abstract class Fit {
     protected int tempoClock;
     protected int espaco;
     protected int indiceProcura;
-    protected boolean ocorreuEvento;  
+    protected int tentativasFalhas;
+    protected boolean ocorreuEvento;
 
     public Fit(ArrayList<Processo> listaEntrada, int tamanhoMemoria) {
 
         this.gerenciadorProcessos = new GerenciadorProcessos(listaEntrada, tamanhoMemoria);
         this.processosEmEspera = gerenciadorProcessos.getProcessosEmEspera();
         this.memoria = gerenciadorProcessos.getMemoria();
+        this.tentativasFalhas = 0;
 
     }
 
@@ -49,11 +51,47 @@ public abstract class Fit {
 
     }
 
+    public int contarEspacos() {
+        indiceProcura = 0;
+        int quantidadeEspacos = 0;
+
+        while (indiceProcura < memoria.getTamanho()) {
+            procuraEspaco(indiceProcura);
+            if (espaco == 0) {
+                indiceProcura += memoria.get(indiceProcura).getTamanho();
+            } else {
+                quantidadeEspacos++;
+                indiceProcura += espaco;
+            }
+        }
+        
+        return quantidadeEspacos;
+        
+    }
+
+    abstract public boolean executar();
+    
+    public Memoria getMemoria() {
+        return memoria;
+    }
+
     @Override
     public String toString() {
         return memoria.toString();
     }
 
-    abstract public boolean executar();
+    public GerenciadorProcessos getGerenciadorProcessos() {
+        return gerenciadorProcessos;
+    }
+
+    public int getTempoClock() {
+        return tempoClock;
+    }
+
+    public int getTentativasFalhas() {
+        return tentativasFalhas;
+    }
+
+   
 
 }

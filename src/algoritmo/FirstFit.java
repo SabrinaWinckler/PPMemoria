@@ -40,6 +40,8 @@ public class FirstFit extends Fit {
 
         }
 
+        this.tentativasFalhas += processosEmEspera.size();
+        
         if (gerenciadorProcessos.executarProcessos()) {
             ocorreuEvento = true;
         }

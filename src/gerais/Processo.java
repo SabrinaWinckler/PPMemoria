@@ -6,11 +6,7 @@ public class Processo {
     private final int tamanho;
     private final int tempoCheg;
     private int tempoExec;
-    private int posicaoMemoria;
-
-    public void setTempoExec(int tempoExec) {
-        this.tempoExec = tempoExec;
-    }
+    private int posicaoMemoria;    
 
     public Processo(String nome, int tamanho, int tempoCheg, int tempoExec) {
         this.nome = nome;

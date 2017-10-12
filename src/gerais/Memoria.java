@@ -4,10 +4,13 @@ public class Memoria {
 
     private final Processo[] memoriaVet;
     private final int tamanho;
+    private int quantidadeProcessos;
+    
 
     public Memoria(int tamanho) {
         this.memoriaVet = new Processo[tamanho];
         this.tamanho = tamanho;
+        this.quantidadeProcessos = 0;
     }
 
     public int getTamanho() {
@@ -30,15 +33,21 @@ public class Memoria {
             if (memoriaVet[posicao + i] == null) {
                 memoriaVet[posicao + i] = processo;
             }
-        }
+        }        
+        this.quantidadeProcessos++;
     }
 
     public void removerProcesso(Processo processo, int posicao) {
         for (int i = 0; i < processo.getTamanho(); i++) {
             memoriaVet[posicao + i] = null;
         }
+        this.quantidadeProcessos--;
     }
 
+    public int getQuantidadeProcessos() {
+        return quantidadeProcessos;
+    }
+        
     @Override
     public String toString() {
 

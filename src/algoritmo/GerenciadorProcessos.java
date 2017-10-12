@@ -21,12 +21,12 @@ public class GerenciadorProcessos {
     private final Memoria memoria;
 
     public GerenciadorProcessos(ArrayList<Processo> listaEntrada, int tamanhoMemoria) {
-        
+
         this.processosDeEntrada = listaEntrada;
         this.processosEmEspera = new ArrayList();
         this.processosEmExecucao = new ArrayList();
         this.memoria = new Memoria(tamanhoMemoria);
-        
+
     }
 
     public void percorreProcessos(int tempoClock) {
@@ -50,32 +50,32 @@ public class GerenciadorProcessos {
 
     public void insereProcesso(Processo processo, int posicao) {
         memoria.inserirProcesso(processo, posicao);
-        processosEmExecucao.add(processo);        
+        processosEmExecucao.add(processo);
         processo.setPosicaoMemoria(posicao);
     }
 
     public boolean executarProcessos() {
 
         boolean removeuAlgumProcesso = false;
-        
-        for (int i = processosEmExecucao.size()-1; i >= 0; i--) {
+
+        for (int i = processosEmExecucao.size() - 1; i >= 0; i--) {
             Processo processo = processosEmExecucao.get(i);
             processo.executar();
             if (processo.getTempoExec() == 0) {
                 removerProcessoFinalizado(processo);
-                removeuAlgumProcesso = true;                                
+                removeuAlgumProcesso = true;
             }
         }
-        
+
         return removeuAlgumProcesso;
-        
+
     }
 
     public void removerProcessoFinalizado(Processo processo) {
-        
+
         memoria.removerProcesso(processo, processo.getPosicaoMemoria());
         processosEmExecucao.remove(processo);
-        
+
     }
 
     public ArrayList<Processo> getProcessosEmEspera() {
@@ -86,6 +86,13 @@ public class GerenciadorProcessos {
         return memoria;
     }
 
-    
-    
+    public boolean finalizou() {
+
+        if (processosDeEntrada.size() == 0 && processosEmEspera.size() == 0
+                && processosEmExecucao.size() == 0) {
+            return true;
+        }
+        return false;
+    }
+
 }
